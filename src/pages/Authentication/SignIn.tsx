@@ -16,31 +16,31 @@ const SignIn = () => {
     }
   }, [isLoggedIn, navigate]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const mockEmail = 'hefkay.lawal2019@gmail.com';
-    const mockPassword = 'p@33word1';
-
-    if (email === mockEmail && password === mockPassword) {
+    try {
+      const { user } = await login(email, password); 
+      console.log('User:', user); 
+      const { role } = user;
+      console.log('Role: ', role);    
+      // await login(email, password); 
       Swal.fire({
         icon: 'success',
         title: 'Login Successful!',
         html: '<span style="color: green">You have successfully signed in.</span>',
       });
-      login(email, password);
       navigate('/dashboard');
-      // window.location.href = '/dashboard';
-    } else {
+    } catch (error) {
       Swal.fire({
         icon: 'error',
         title: 'Login Failed',
-        html: '<span style="color: red">Invalid email or password!, Please contact Admin for more details.</span>',
+        html: '<span style="color: red">Invalid email or password! Please try again.</span>',
       });
-      // navigate('/auth/signin');
     }
+    setEmail('');
+    setPassword('');
   };
-  
 
   return (
     <div className="h-screen flex flex-col lg:flex-row xl:flex-row">

@@ -2,33 +2,32 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import PreAuthBanner from '../../components/PreAuthBanner';
+import axios from 'axios';
 
 const ResetPassword = () => {
  const [ email, setEmail ] = useState('');
+ const API_BASE_URL = 'https://localhost:7267/api/Auth';
 
- const handleSubmit = (event: { preventDefault: () => void; }) => {
-  event.preventDefault();
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-  const mockEmail = 'hefkay.lawal2019@gmail.com';
-
-  if (email === mockEmail) {
+  try {
+    await axios.post(`${API_BASE_URL}/forgotpassword`, { email });
     Swal.fire({
       icon: 'success',
-      title: 'Password Reset Success!',
-      // text: 'Check your email for further info!',
-      html: '<span style="color: green">Check your email for further info!</span>',
-      
+      title: 'Reset Link Sent!',
+      html: '<span style="color: green">A password reset link has been sent to your email address!</span>',
     });
-    window.location.href = '/auth/signin';
-
-  } else {
+  } catch (error) {
     Swal.fire({
       icon: 'error',
-      title: 'Password Reset Failed',
-      // text: 'Email is not attributed to any existing account!',
+      title: 'Reset Failed',
+      // text: error.response?.data?.message || 'An error occurred while attempting to reset the password.',
       html: '<span style="color: red">Email is not attributed to any existing account!</span>',
     });
+    
   }
+  setEmail(''); 
 };
 
   return (

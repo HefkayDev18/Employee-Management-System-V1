@@ -4,11 +4,13 @@ import { Toaster } from 'react-hot-toast';
 import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
 import ResetPassword from './pages/Authentication/ResetPassword';
+import SetNewPassword from './pages/Authentication/SetNewPassword';
 import Loader from './common/Loader';
 import { AuthProvider, useAuth } from './pages/Authentication/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import routes from './routes';
 import Dashboard from './pages/Dashboard/Dashboard';
+import { setAuthToken } from './services/apiService';
 
 const DefaultLayout = lazy(() => import('./layout/DefaultLayout'));
 
@@ -16,6 +18,10 @@ function App() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      setAuthToken(token);
+    }
     setTimeout(() => setLoading(false), 1000);
   }, []);
 
@@ -41,7 +47,7 @@ function AuthRoutes() {
 
   useEffect(() => {
     if (!isLoggedIn && !location.pathname.startsWith('/auth')) {
-      window.location.href = '/auth/signin';
+      <Navigate to="/auth/signin" replace />;
     }
   }, [isLoggedIn, location.pathname]);
 
@@ -51,6 +57,7 @@ function AuthRoutes() {
       <Route path="/auth/signin" element={<SignIn />} />
       <Route path="/auth/signup" element={<SignUp />} />
       <Route path="/auth/reset" element={<ResetPassword />} />
+      <Route path="/auth/resetpassword" element={<SetNewPassword/>} />
       <Route element={<DefaultLayout />}>
         <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
         {routes.map((route, index) => (
@@ -66,3 +73,6 @@ function AuthRoutes() {
 }
 
 export default App;
+
+
+

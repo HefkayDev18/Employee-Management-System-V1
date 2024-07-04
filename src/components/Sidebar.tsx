@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import Logo from '../images/logo/logo.png';
 import SidebarLinkGroup from './SidebarLinkGroup';
+import { useAuth } from '../pages/Authentication/AuthContext';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -11,6 +12,7 @@ interface SidebarProps {
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const location = useLocation();
   const { pathname } = location;
+  const { user } = useAuth();
 
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
@@ -108,6 +110,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
             <ul className="mb-6 flex flex-col gap-1.5">
               {/* <!-- Menu Item Dashboard --> */}
+              
               <SidebarLinkGroup
                 activeCondition={
                   pathname === '/' || pathname.includes('dashboard')
@@ -196,9 +199,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   );
                 }}
               </SidebarLinkGroup>
+              
               {/* <!-- Menu Item Dashboard --> */}
 
               {/* <!-- Menu Item Analytics --> */}
+              {user?.role === 'Admin' && (
               <li>
                 <NavLink
                   to="/analytics"
@@ -234,9 +239,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       </clipPath>
                     </defs>
                   </svg>
-                  Analytics
+                  Employee Analytics
                 </NavLink>
               </li>
+              )}
               {/* <!-- Menu Item Analytics --> */}
 
               {/* Menu Item Employee Actions */}
@@ -319,6 +325,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                        {user?.role === 'Admin' && (
                           <li>
                             <NavLink
                               to="/employee/create-employee"
@@ -330,6 +337,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               Create Employee
                             </NavLink>
                           </li>
+                        )}
+                        {user?.role === 'Admin' && (
                           <li>
                             <NavLink
                               to="/employee/update-employee"
@@ -341,6 +350,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               Update Employee
                             </NavLink>
                           </li>
+                        )}
                           <li>
                             <NavLink
                               to="/employee/view-employees"

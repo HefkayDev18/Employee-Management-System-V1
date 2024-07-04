@@ -6,6 +6,9 @@ import UserOne from '../images/user/user-01.png';
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { user } = useAuth();
+
+  const { position } = user?.employeeObj || {};
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
@@ -53,10 +56,16 @@ const DropdownUser = () => {
         to="#"
       >
         <span className="hidden text-right lg:block">
-          <span className="block text-sm font-medium text-black dark:text-white">
-            Dr. Fatawu Kazeem
+          <span className="block text-sm font-medium text-black text-center dark:text-white">
+            {user?.name}
           </span>
-          <span className="block text-xs">Associate Professor</span>
+          
+          <span className="block text-xs font-bold text-center">Position: {position}</span>
+         
+          <span className="block text-xs font-small text-darkgray text-center dark:text-white">
+            {user?.role} account
+          </span>
+         
         </span>
 
         <span className="h-12 w-12 rounded-full">

@@ -2,33 +2,40 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import PreAuthBanner from '../../components/PreAuthBanner';
+import { useAuth } from './AuthContext';
 
 
 const SignUp = () => {
-  const [name, setName] = useState('');
+  // if(email.endsWith("@unilag.edu.ng")) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const { signup } = useAuth();
+  // const navigate = useNavigate();
 
-  const handleSubmit = (event: { preventDefault: () => void; }) => {
-    event.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    if(email.endsWith("@unilag.edu.ng")) {
+    try {
+      await signup(email, password, name);
       Swal.fire({
         icon: 'success',
-        title: 'Signup successful',
-        // text: 'Your account has been created, proceed to login!',
+        title: 'Signup Successful!',
         html: '<span style="color: green">Your account has been created, proceed to login!</span>',
       });
-      window.location.href = '/auth/signin';
-    } else {
+    } catch (error) {
       Swal.fire({
         icon: 'error',
-        title: 'Signup failed',
-        // text: 'Accounts are created with only unilag emails!',
-        html: '<span style="color: red">Accounts are created with only unilag emails!</span>',
-      });      
+        title: 'Signup Failed',
+        html: '<span style="color: red">Failed to sign up! Please try again or contact admin</span>',
+        // html: `<span style="color: red">${error}</span>`,
+      });
     }
-  }
+
+    setEmail('');
+    setPassword('');
+    setName('');
+  };
 
 
   return (
