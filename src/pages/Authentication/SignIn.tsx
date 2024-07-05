@@ -20,11 +20,11 @@ const SignIn = () => {
     e.preventDefault();
 
     try {
-      const { user } = await login(email, password); 
-      console.log('User:', user); 
-      const { role } = user;
-      console.log('Role: ', role);    
-      // await login(email, password); 
+      // const { user } = await login(email, password); 
+      // console.log('User:', user); 
+      // const { role } = user;
+      // console.log('Role: ', role);    
+      await login(email, password); 
       Swal.fire({
         icon: 'success',
         title: 'Login Successful!',
