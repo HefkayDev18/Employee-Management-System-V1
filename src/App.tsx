@@ -90,8 +90,11 @@ import { AuthProvider, useAuth } from './pages/Authentication/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import routes from './routes';
 import Dashboard from './pages/Dashboard/Dashboard';
-import { setAuthToken } from './services/ApiService';
+import { getUserRole, setAuthToken } from './services/ApiService';
 import { checkTokenExpiry } from './services/CheckTokenExpiry';
+import UnauthorizedPage from './pages/Authentication/UnauthorizedPage';
+import Error404Page from './components/Error404Page';
+import Swal from 'sweetalert2';
 
 const DefaultLayout = lazy(() => import('./layout/DefaultLayout'));
 
@@ -106,7 +109,7 @@ function App() {
 function MainApp() {
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const token = sessionStorage.getItem('token');
@@ -125,6 +128,35 @@ function MainApp() {
 
     return () => clearInterval(interval);
   }, [navigate, logout]);
+
+  
+  useEffect(() => {
+    const checkUserRole = async () => {
+      if (!user) return;
+
+      try {
+        const { role } = await getUserRole(user.employeeObj.userId);
+        if (role !== user.role) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Logged out!',
+            html: '<span style="color: orange">Your role has been changed. Please login again.</span>',
+            confirmButtonText: 'OK'
+          }).then(() => {
+            logout();
+            navigate('/auth/signin');
+          });
+        }
+      } catch (error) {
+        console.error('Error checking user role:', error);
+      }
+    };
+
+    const roleCheckInterval = setInterval(checkUserRole, 20000);
+
+    return () => clearInterval(roleCheckInterval);
+  }, [user, logout, navigate]);
+
 
   return loading ? (
     <Loader />
@@ -160,13 +192,15 @@ function AuthRoutes() {
       <Route path="/auth/signup" element={<SignUp />} />
       <Route path="/auth/reset" element={<ResetPassword />} />
       <Route path="/auth/resetpassword" element={<SetNewPassword />} />
+      <Route path="/unauthorized" element={<UnauthorizedPage />} />
+      <Route path="*" element={<Error404Page />} />
       <Route element={<DefaultLayout />}>
         <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
         {routes.map((route, index) => (
           <Route
             key={index}
             path={route.path}
-            element={<PrivateRoute element={<route.component />} />}
+            element={<PrivateRoute element={<route.component />} roles={route.roles} />}
           />
         ))}
       </Route>

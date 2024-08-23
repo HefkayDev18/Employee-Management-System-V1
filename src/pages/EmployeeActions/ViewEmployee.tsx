@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
 import Breadcrumb from '../../components/Breadcrumb';
 import * as XLSX from 'xlsx';
-import { useAuthToken, getEmployees } from '../../services/ApiService';
+import { useAuthToken, getEmployees, deleteEmployee } from '../../services/ApiService';
 import { useAuth } from '../Authentication/AuthContext';
 import { formatDate, calculateAge, formatCurrency } from '../../services/UtilityFunctions';
 import Pagination from '../../components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../../common/Loader';
+import { FaTrash } from 'react-icons/fa';
+import { toast } from 'react-hot-toast';
+import Swal from 'sweetalert2';
+
 
 interface EmployeeRecord {
   employeeId: number;
@@ -25,7 +29,7 @@ interface EmployeeRecord {
 }
 
 const EmployeeRecordsView = () => {
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn } = useAuth();
   const [employeeRecords, setEmployeeRecords] = useState<EmployeeRecord[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -81,39 +85,93 @@ const EmployeeRecordsView = () => {
     navigate(`/employee/update-employee`, { state: { employee } });
   };
 
+  const handleUpdateRoleClick = async (employee: EmployeeRecord) => {
+    const result = await Swal.fire({
+      title: 'Role Update',
+      html: '<span style="color: orange">Are you sure you want to update this employee\'s role?</span>',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, confirmed!'
+    });
+
+    if (result.isConfirmed) {
+    navigate('/employee/update-employee-role', { state: { employee } });
+    }
+  };
+  
+  const handleDeleteClick = async (id: number) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      // text: 'You will not be able to recover this employee once deleted!',
+      html: '<span style="color: red">You will not be able to recover this employee once deleted!</span>',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete!'
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await deleteEmployee(id);
+        
+        setEmployeeRecords((prevRecords) =>
+          prevRecords.filter((record) => record.employeeId !== id)
+        );
+        
+        toast.success('Employee record deleted successfully!', {
+          duration: 5000,
+        });
+        // toast.success('Employee record deleted successfully!',
+        // {
+        //     duration: 5000,
+        //     // onClose: () => {
+        //     // navigate('/employee/view-employees');
+        // });
+        navigate('/employee/view-employees');
+      } catch (error) {
+        toast.error('Failed to delete employee record. Please try again.',);
+      }
+    }
+  };
+
   const exportToExcel = () => {
     const fileName = 'EmployeeRecords.xlsx';
     const fileType =
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
-    type EmployeeRecordData = {
-      'Full Name': string;
-      Email: string;
-      'Phone Number': string;
-      Gender: string;
-      Position: string;
-      Department: string;
-    };
+    // type EmployeeRecordData = {
+    //   'Full Name': string;
+    //   Email: string;
+    //   'Phone Number': string;
+    //   Gender: string;
+    //   Position: string;
+    //   Department: string;
+    //   Salary: number;
+    //   Status: string;
+    //   'Date Created': string;
+    //   Age: number;
+    //   'Date of Birth': string;
+    //   Role: string;
+    // };
 
-    const data = filteredEmployeeRecords.map((record) => {
-      const recordData: EmployeeRecordData = {
-        'Full Name': record.fullName,
-        'Email': record.email,
-        'Phone Number': record.phoneNumber,
-        'Gender': record.gender,
-        'Position': record.position,
-        'Department': record.department
-      };
-      
-      if (user?.role === 'Admin') {
-        (recordData as EmployeeRecordData & { 'Salary (₦)': number })['Salary (₦)'] = record.salary;
-        (recordData as EmployeeRecordData & { Status : string })['Status'] = record.isActive ? 'Active' : 'Not Active';
-        (recordData as EmployeeRecordData & { Role : string })['Role'] = record.roleId === 1 ? 'Admin' : 'User';
-      }
-  
-      return recordData;
-    });
-   
+    const data = filteredEmployeeRecords.map((record) => ({
+      'Full Name': record.fullName,
+      Email: record.email,
+      'Phone Number': record.phoneNumber,
+      Gender: record.gender,
+      Position: record.position,
+      Department: record.department,
+      Salary: formatCurrency(record.salary),
+      Status: record.isActive ? 'Active' : 'Not Active',
+      'Date Created': formatDate(new Date(record.dateCreated)),
+      Age: calculateAge(record.dateOfBirth),
+      'Date of Birth': formatDate(new Date(record.dateOfBirth)),
+      Role: record.roleId === 1 ? 'Admin' : 'User',
+    }));
+
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = { Sheets: { 'Employee Records': ws }, SheetNames: ['Employee Records'] };
     const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
@@ -165,7 +223,7 @@ const EmployeeRecordsView = () => {
                   Email
                 </th>
                 <th className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-center text-md border-b border-gray-200 dark:border-strokedark">
-                  Phone Number
+                  Phone&nbsp;Number
                 </th>
                 <th className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-center text-md border-b border-gray-200 dark:border-strokedark">
                   Gender
@@ -176,47 +234,27 @@ const EmployeeRecordsView = () => {
                 <th className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-center text-md border-b border-gray-200 dark:border-strokedark">
                   Department
                 </th>
-                {user?.role === 'Admin' && (
                 <th className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-center text-md border-b border-gray-200 dark:border-strokedark">
                   Salary (₦)
                 </th>
-                )}
-
-                {user?.role === 'Admin' && (
                 <th className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-center text-md border-b border-gray-200 dark:border-strokedark">
                   Status
                 </th>
-                )}
-
-                {user?.role === 'Admin' && (
                 <th className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-center text-md border-b border-gray-200 dark:border-strokedark">
                   Date Created
                 </th>
-                )}
-
-                {user?.role === 'Admin' && (
                 <th className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-center text-md border-b border-gray-200 dark:border-strokedark">
                   Age
                 </th>
-                )}
-
-                {user?.role === 'Admin' && (
                 <th className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-center text-md border-b border-gray-200 dark:border-strokedark">
-                  Date Of Birth
+                  Date of Birth
                 </th>
-                )}
-
-                {user?.role === 'Admin' && (
                 <th className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-center text-md border-b border-gray-200 dark:border-strokedark">
                   Role
                 </th>
-                )}
-
-                {user?.role === 'Admin' && (
                 <th className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-center text-md border-b border-gray-200 dark:border-strokedark">
                   Actions
                 </th>
-                )}
               </tr>
             </thead>
             <tbody>
@@ -225,62 +263,91 @@ const EmployeeRecordsView = () => {
                   key={record.employeeId}
                   className={`${index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-900' : 'bg-white dark:bg-boxdark'}`}
                 >
-                  <td className="px-4 py-6 text-center text-sm border-b border-gray-200 dark:border-strokedark">{index + 1}</td>
-                  <td className="px-4 py-6 text-center text-sm border-b border-gray-200 dark:border-strokedark">{record.fullName}</td>
-                  <td className="px-4 py-6 text-center text-sm border-b border-gray-200 dark:border-strokedark">{record.email}</td>
-                  <td className="px-4 py-6 text-center text-sm border-b border-gray-200 dark:border-strokedark">{record.phoneNumber}</td>
-                  <td className="px-4 py-6 text-center text-sm border-b border-gray-200 dark:border-strokedark">{record.gender}</td>
-                  <td className="px-4 py-6 text-center text-sm border-b border-gray-200 dark:border-strokedark">{record.position}</td>
-                  <td className="px-4 py-6 text-center text-sm border-b border-gray-200 dark:border-strokedark">{record.department}</td>
-                  {user?.role === 'Admin' && (
-                    <td className="px-4 py-6 text-center text-sm border-b border-gray-200 dark:border-strokedark">{formatCurrency(record.salary)}</td>
-                  )}
-                  {user?.role === 'Admin' && (
-                  <td className="px-4 py-6 text-center text-sm border-b border-gray-200 dark:border-strokedark">
+                  <td className="px-4 py-6 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
+                    {indexOfFirstRecord + index + 1}
+                  </td>
+                  <td className="px-4 py-6 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
+                    {record.fullName}
+                  </td>
+                  <td className="px-4 py-6 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
+                    {record.email}
+                  </td>
+                  <td className="px-4 py-6 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
+                    {record.phoneNumber}
+                  </td>
+                  <td className="px-4 py-6 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
+                    {record.gender}
+                  </td>
+                  <td className="px-4 py-6 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
+                    {record.position}
+                  </td>
+                  <td className="px-4 py-6 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
+                    {record.department}
+                  </td>
+                  <td className="px-4 py-6 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
+                    {formatCurrency(record.salary)}
+                  </td>
+                  <td className="px-4 py-6 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
                     {record.isActive ? 'Active' : 'Not Active'}
                   </td>
-                  )}
-                  {user?.role === 'Admin' && (
-                  <td className="px-4 py-6 text-center text-sm border-b border-gray-200 dark:border-strokedark">{formatDate(new Date(record.dateCreated))}</td>
-                  )}
-
-                  {user?.role === 'Admin' && (
-                   <td className="px-4 py-6 text-center text-sm border-b border-gray-200 dark:border-strokedark">{calculateAge(record.dateOfBirth)}</td>
-                  )}
-
-                  {user?.role === 'Admin' && (
-                  <td className="px-4 py-6 text-center text-sm border-b border-gray-200 dark:border-strokedark">{formatDate(new Date(record.dateOfBirth))}</td>
-                  )}
-
-                  {user?.role === 'Admin' && (
-                  <td className="px-4 py-6 text-center text-sm border-b border-gray-200 dark:border-strokedark">
+                  <td className="px-4 py-6 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
+                    {formatDate(new Date(record.dateCreated))}
+                  </td>
+                  <td className="px-4 py-6 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
+                    {calculateAge(record.dateOfBirth)}
+                  </td>
+                  <td className="px-4 py-6 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
+                    {formatDate(new Date(record.dateOfBirth))}
+                  </td>
+                  <td className="px-4 py-6 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
                     {record.roleId === 1 ? 'Admin' : 'User'}
                   </td>
-                  )}
-
-                  {user?.role === 'Admin' && (
-                  <td className="px-4 py-6 text-center text-sm border-b border-gray-200 dark:border-strokedark">
+                  <td className="px-4 py-4 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
                     <button
+                      className="bg-primary text-white text-xs py-2 px-3 rounded-md font-sm transition hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-dark"
                       onClick={() => handleUpdateClick(record)}
-                      className="bg-primary text-white py-2 px-3 rounded-md font-sm transition hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-dark"
                     >
-                      Update
+                      Update&nbsp;Employee
                     </button>
+
+                    
+                    <button
+                      className="bg-warning text-white text-xs py-2 px-3 mt-2 rounded-md font-sm transition hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-dark"
+                      onClick={() => handleUpdateRoleClick(record)}
+                    >
+                      Update&nbsp;Role
+                    </button>
+
+                    <button
+                      className="bg-danger text-white  text-sm py-1.5 px-1 mt-2 rounded-md font-sm transition hover:bg-danger focus:outline-none focus:ring-2 focus:ring-red-danger"
+                      onClick={() => handleDeleteClick(record.employeeId)}
+                      title = 'Delete'
+                    >
+                      <span>
+                        <FaTrash className="inline-block text-xs mr-0.5" /> 
+                        <span className="text-xs mx-1">Delete</span>
+                      </span>
+                      
+                    </button>
+
                   </td>
-                  )}
                 </tr>
               ))}
             </tbody>
           </table>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
     </>
   );
 };
 
 export default EmployeeRecordsView;
+
+
+
+

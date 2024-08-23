@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../pages/Authentication/AuthContext';
-
 import UserOne from '../images/user/user-01.png';
+import Loader from '../common/Loader';
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -15,6 +15,7 @@ const DropdownUser = () => {
 
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   // close on click outside
   useEffect(() => {
@@ -43,12 +44,17 @@ const DropdownUser = () => {
   });
 
   const handleLogout = () => {
+    setLoading(true);
     logout();
-    navigate('auth/signin');
+    setTimeout(() => {
+      navigate('/auth/signin');
+      setLoading(false);
+    }, 1000);
   };
-
+  
   return (
-    <div className="relative">
+    <div className="relative" key={loading ? 'loading' : 'not-loading'}>
+      {loading ? <Loader /> : null}
       <Link
         ref={trigger}
         onClick={() => setDropdownOpen(!dropdownOpen)}

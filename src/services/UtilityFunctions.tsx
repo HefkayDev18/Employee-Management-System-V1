@@ -56,5 +56,15 @@ export const calculateAge = (dateOfBirth: Date | string): number | undefined => 
     }).format(amount);
   };
   
-  
-  
+  export const parseCurrency = (formatted: string) => {
+    return parseFloat(formatted.replace(/[^0-9.-]+/g, ''));
+  };
+
+  export const calculatePercentageChange = (oldValue: number, newValue: number) => {
+    if (oldValue === 0) return { percentage: 0, isIncreasing: true }; 
+
+    const percentageChange = ((newValue - oldValue) / oldValue) * 100;
+    const isIncreasing = percentageChange > 0;
+
+    return { percentage: Math.abs(percentageChange), isIncreasing };
+  };
