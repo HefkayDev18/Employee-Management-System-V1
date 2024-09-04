@@ -250,7 +250,7 @@ export const updateEmployeeHistory = async (employeeId: number, empHistory : any
       const response = await api.put(`/CoreFeatures/UpdateEmploymentHistory/${employeeId}`, empHistory);
       return response.data;
   } catch (error) {
-      console.error('Error fetching employment history:', error);
+      console.error('Error updating employment history:', error);
       throw error;
   }
 };
@@ -446,4 +446,47 @@ export const fetchAllUploads = async () => {
 };
 
 
+//#endregion
+
+//#region Advertisements
+export const uploadAds = async (empId: number, token:any, formData: FormData) => {
+  try {
+    const response = await api.post(`/Advertisements/UploadAds/${empId}`, formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error uploading advertisement:', error);
+    throw error;
+  }
+};
+
+export const getAllAds = async () => {
+  try {
+    const response =  await api.get('/Advertisements/GetAllAds');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching ads:', error);
+    throw error;
+  }
+};
+
+export const updateAds = async (employeeId: number, adsId:number, updatedAd : FormData, ) => {
+  try {
+      const response = await api.put(`/Advertisements/UpdateAds/${employeeId}/${adsId}`, updatedAd, 
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      return response.data;
+  } catch (error) {
+      console.error('Error updating adverts:', error);
+      throw error;
+  }
+};
 //#endregion

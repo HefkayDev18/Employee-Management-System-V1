@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
-import { useNavigate } from 'react-router-dom';
 import { getMedicalRecords } from '../../../services/ApiService';
 import Loader from '../../../common/Loader';
 import Breadcrumb from '../../../components/Breadcrumb';
@@ -30,7 +29,7 @@ const MedicalRecordsView = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [recordsPerPage] = useState<number>(7);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchMedicalRecords = async () => {

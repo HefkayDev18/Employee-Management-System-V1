@@ -28,9 +28,9 @@ const CardFour = () => {
       <div className="mt-4 flex items-end justify-between">
         <div>
           <h4 className="text-title-md font-bold text-black dark:text-white">
-            3.456
+            3
           </h4>
-          <span className="text-sm font-medium">Dummy Data</span>
+          <span className="text-sm font-medium">Not signedup</span>
         </div>
 
         <span className="flex items-center gap-1 text-sm font-medium text-meta-5">

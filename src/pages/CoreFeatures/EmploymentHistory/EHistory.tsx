@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { getEmployees, getEmploymentHistory } from '../../services/ApiService';
-import Breadcrumb from '../../components/Breadcrumb';
-import Pagination from '../../components/Pagination';
+import { getEmployees, getEmploymentHistory } from '../../../services/ApiService';
+import Breadcrumb from '../../../components/Breadcrumb';
+import Pagination from '../../../components/Pagination';
 import { useNavigate } from 'react-router-dom';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import { toast } from 'react-hot-toast';
 
 const EmployeeList: React.FC = () => {

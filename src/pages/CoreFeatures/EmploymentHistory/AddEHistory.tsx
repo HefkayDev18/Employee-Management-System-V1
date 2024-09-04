@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Breadcrumb from '../../components/Breadcrumb';
-import Loader from '../../common/Loader';
-import { addEmployeeHistory, getEmployeeById } from '../../services/ApiService';
+import Breadcrumb from '../../../components/Breadcrumb';
+import Loader from '../../../common/Loader';
+import { addEmployeeHistory, getEmployeeById } from '../../../services/ApiService';
 import { toast } from 'react-hot-toast';
 
 const AddEmployeeHistory = () => {

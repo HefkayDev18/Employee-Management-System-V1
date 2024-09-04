@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import Loader from '../../common/Loader';
-import { getEmployeeById, getEmploymentHistory, updateEmployeeHistory } from '../../services/ApiService';
-import Breadcrumb from '../../components/Breadcrumb';
+import Loader from '../../../common/Loader';
+import { getEmployeeById, getEmploymentHistory, updateEmployeeHistory } from '../../../services/ApiService';
+import Breadcrumb from '../../../components/Breadcrumb';
 
 const UpdateEmploymentHistory: React.FC = () => {
     const navigate = useNavigate();

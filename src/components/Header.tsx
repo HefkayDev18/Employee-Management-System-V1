@@ -3,6 +3,11 @@ import DropdownMessage from './DropdownMessage';
 import DropdownNotification from './DropdownNotification';
 import DropdownUser from './DropdownUser';
 
+const nonClickable: React.CSSProperties = {
+  pointerEvents: 'none',
+  userSelect: 'none'
+};
+
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
@@ -55,8 +60,8 @@ const Header = (props: {
           {/* <!-- Hamburger Toggle BTN --> */}
         </div>
 
-        <div className="hidden sm:block">
-          <form action="https://formbold.com/s/unique_form_id" method="POST">
+        <div className="hidden sm:block" style={nonClickable}>
+          <form action=" " method="POST">
             <div className="relative">
               <button className="absolute top-1/2 left-0 -translate-y-1/2">
                 <svg

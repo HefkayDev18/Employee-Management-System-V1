@@ -3,9 +3,10 @@ import { lazy } from 'react';
 const dashboard = lazy(() => import('../pages/Dashboard/Dashboard'));
 const Analytics = lazy(() => import('../pages/Analytics'));
 const Survey = lazy(() => import('../pages/Surveys'));
-const History = lazy(() => import('../pages/CoreFeatures/EHistory'));
-const AddHistory = lazy(() => import('../pages/CoreFeatures/AddEHistory'));
-const UpdateHistory = lazy(() => import('../pages/CoreFeatures/UpdateEHistory'));
+const History = lazy(() => import('../pages/CoreFeatures/EmploymentHistory/EHistory.tsx'));
+const UserHistory = lazy(() => import('../pages/CoreFeatures/EmploymentHistory/UserEHistory.tsx'));
+const AddHistory = lazy(() => import('../pages/CoreFeatures/EmploymentHistory/AddEHistory.tsx'));
+const UpdateHistory = lazy(() => import('../pages/CoreFeatures/EmploymentHistory/UpdateEHistory.tsx'));
 const SubmitAppraisal = lazy(() => import('../pages/CoreFeatures/Appraisals/SubmitAppraisal.tsx'));
 const ReviewAppraisal = lazy(() => import('../pages/CoreFeatures/Appraisals/ReviewAppraisal.tsx'));
 const AppraisalsHistory = lazy(() => import('../pages/CoreFeatures/Appraisals/AppraisalHistory.tsx'));
@@ -13,7 +14,9 @@ const AddMedicalRecord = lazy(() => import('../pages/CoreFeatures/MedicalRecords
 const AddAdmMedicalRecord = lazy(() => import('../pages/CoreFeatures/MedicalRecords/ADM_ViewMedRecords.tsx'));
 const ViewMedicalRecords = lazy(() => import('../pages/CoreFeatures/MedicalRecords/ViewAllMedRecords.tsx'));
 const ViewEmpMedicalRecords = lazy(() => import('../pages/CoreFeatures/MedicalRecords/ViewEmpMedRecords.tsx'));
-const Adverts = lazy(() => import('../pages/CoreFeatures/IAdvertisement'));
+const AddAdverts = lazy(() => import('../pages/CoreFeatures/Advertisements/AddAdverts.tsx'));
+const UpdateAdverts = lazy(() => import('../pages/CoreFeatures/Advertisements/UpdateAdverts.tsx'));
+const ViewAdverts = lazy(() => import('../pages/CoreFeatures/Advertisements/ViewAdverts.tsx'));
 const FileUploads = lazy(() => import('../pages/CoreFeatures/FileUploads/CUpload.tsx'));
 const empFileUploads = lazy(() => import('../pages/CoreFeatures/FileUploads/ViewUpload.tsx'));
 const admFileUploads = lazy(() => import('../pages/CoreFeatures/FileUploads/ADM_ViewUploads.tsx'));
@@ -57,10 +60,24 @@ const coreRoutes = [
     component: Survey,
   },
   {
-    path: '/core-features/advertisement',
-    title: 'Internal Adverts',
-    component: Adverts,
+    path: '/core-features/addadverts',
+    title: 'Upload Adverts',
+    component: AddAdverts,
+    roles: ['Admin'],
   },
+  {
+    path: '/core-features/updateadverts',
+    title: 'Update Adverts',
+    component:  UpdateAdverts,
+    roles: ['Admin'],
+  },
+  {
+    path: '/core-features/viewadverts',
+    title: 'View Adverts',
+    component: ViewAdverts,
+  },
+
+  //#region File Uploads
   {
     path: '/files/uploads',
     title: 'File Uploads',
@@ -78,6 +95,7 @@ const coreRoutes = [
     component: admFileUploads,
     roles: ['Admin'],
   },
+  //#endregion
 
   //#region Departments
   {
@@ -144,6 +162,11 @@ const coreRoutes = [
     roles: ['Admin'],
   },
   {
+    path: '/core-features/userhistory',
+    title: 'User Employment History',
+    component: UserHistory,
+  },
+  {
     path: '/core-features/add-history',
     title: 'Add Employment History',
     component: AddHistory,
@@ -177,6 +200,7 @@ const coreRoutes = [
 
   //#endregion
   
+  //#region Medical Records
   {
     path: '/medicals/add-adm_medical-records',
     title: 'Add Medical Record',
@@ -201,6 +225,8 @@ const coreRoutes = [
     component: ViewEmpMedicalRecords,
     roles: ['User'],
   },
+  //#endregion
+
   {
     path: '/employee/update-employee-role',
     title: 'Update Employee Role',

@@ -12,6 +12,11 @@ const DropdownMessage = () => {
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
 
+  const nonClickable: React.CSSProperties = {
+    pointerEvents: 'none',
+    userSelect: 'none'
+  };
+
   // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }: MouseEvent) => {
@@ -45,6 +50,7 @@ const DropdownMessage = () => {
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full border-[0.5px] border-stroke bg-gray hover:text-primary dark:border-strokedark dark:bg-meta-4 dark:text-white"
         to="#"
+        style={nonClickable}
       >
         <span className="absolute -top-0.5 -right-0.5 z-1 h-2 w-2 rounded-full bg-meta-1">
           <span className="absolute -z-1 inline-flex h-full w-full animate-ping rounded-full bg-meta-1 opacity-75"></span>
