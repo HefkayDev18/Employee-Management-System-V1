@@ -203,7 +203,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Dashboard --> */}
 
               {/* Menu Item Employee Actions */}
-              {user?.role === 'Admin' && (
+              {(user?.role === 'Admin' || user?.role === 'HR_Admin') && (
               <SidebarLinkGroup
                 activeCondition={
                   pathname === '/employee' || pathname.includes('employee')
@@ -269,6 +269,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                          {user?.role === 'HR_Admin' && (
                           <li>
                             <NavLink
                               to="/employee/create-employee"
@@ -280,7 +281,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               Create Employee
                             </NavLink>
                           </li>
-                        
+                          )}               
                           {/* <li>
                             <NavLink
                               to="/employee/update-employee"
@@ -293,6 +294,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             </NavLink>
                           </li> */}
 
+                          {(user?.role === 'Admin' || user?.role === 'HR_Admin') && (
                           <li>
                             <NavLink
                               to="/employee/view-employees"
@@ -304,6 +306,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               View/Update Employee(s)
                             </NavLink>
                           </li>
+                          )}
                         </ul>
                       </div>
                       {/* <!-- Dropdown Menu End --> */}
@@ -315,7 +318,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* Menu Item Employee Actions */}
 
               {/* <!-- Menu Item Departments --> */}
-              {user?.role === 'Admin' && (
               <SidebarLinkGroup
                 activeCondition={
                   pathname === '/departments' || pathname.includes('departments')
@@ -375,6 +377,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                          {user?.role === 'Faculty_Officer' && (
                           <li>
                             <NavLink
                               to="/departments/add-department"
@@ -386,7 +389,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               Add Department
                             </NavLink>
                           </li>
-                        
+                          )}
+
                           <li>
                             <NavLink
                               to="/departments/view-departments"
@@ -405,11 +409,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   );
                 }}
               </SidebarLinkGroup>
-              )}
               {/* <!-- Menu Item Departments --> */}
 
               {/* <!-- Menu Item Faculties --> */}
-              {user?.role === 'Admin' && (
               <SidebarLinkGroup
                 activeCondition={
                   pathname === '/faculties' || pathname.includes('faculties')
@@ -470,6 +472,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                          {user?.role === 'Faculty_Officer' && (
                           <li>
                             <NavLink
                               to="/faculties/add-faculties"
@@ -481,6 +484,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               Add Faculty
                             </NavLink>
                           </li>
+                          )}
+                          
                         
                           <li>
                             <NavLink
@@ -500,10 +505,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   );
                 }}
               </SidebarLinkGroup>
-              )}
               {/* <!-- Menu Item Faculties --> */}
 
               {/* Menu Item Employment History */}
+              {(user?.role === 'Admin' || user?.role === 'HR_Admin' || user?.role === 'User') && (
               <SidebarLinkGroup
                 activeCondition={
                   pathname === '/core-features' || pathname.includes('core-features')
@@ -562,7 +567,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                        {user?.role === 'Admin' && (
+                        {(user?.role === 'Admin' || user?.role === 'HR_Admin') && (
                           <li>
                             <NavLink
                               to="/core-features/history"
@@ -597,6 +602,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   );
                 }}
               </SidebarLinkGroup>
+              )}
               {/* Menu Item Employment History */}
 
               {/* Menu Item Appraisal */}
@@ -751,7 +757,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                        {user?.role === 'Admin' && (
+                        {user?.role === 'MED_Admin' && (
                           <li>
                             <NavLink
                               to="/medicals/add-adm_medical-records"
@@ -764,7 +770,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             </NavLink>
                           </li>
                         )}
-                        {user?.role === 'Admin' && (
+                        {user?.role === 'MED_Admin' && (
                           <li>
                             <NavLink
                               to="/medicals/view-medical-records"
@@ -777,7 +783,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             </NavLink>
                           </li>
                         )}
-                         {user?.role === 'User' && (
+                        {/* {user?.role === 'User' && ( */}
                           <li>
                             <NavLink
                               to="/medicals/view-empmedical-records"
@@ -789,7 +795,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               View Personal Records
                             </NavLink>
                           </li>
-                        )}
+                        {/* )} */}
                         </ul>
                       </div>
                       {/* <!-- Dropdown Menu End --> */}
@@ -797,6 +803,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   );
                 }}
               </SidebarLinkGroup>
+              {/* )} */}
               {/* Menu Item Medical Records */}
 
               {/* Menu Item Uploads */}
@@ -882,7 +889,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             </NavLink>
                           </li>
                           )}
-                          {user?.role === 'Admin' && (
+                          {user?.role === 'HR_Admin' && (
                           <li>
                             <NavLink
                               to="/files/view-adm-uploads"
@@ -963,7 +970,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                        {user?.role === 'Admin' && (
+                        {user?.role === 'HR_Admin' && (
                           <li>
                             <NavLink
                               to="/core-features/addadverts"

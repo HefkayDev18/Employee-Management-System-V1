@@ -10,6 +10,7 @@ const UpdateEmploymentHistory: React.FC = () => {
     const location = useLocation();
     const employeeId = location.state?.employeeId;
 
+
     const [loading, setLoading] = useState(true);
     const [employeeObj, setEmployeeObj] = useState<any>(null);
     const [formData, setFormData] = useState({
@@ -36,17 +37,17 @@ const UpdateEmploymentHistory: React.FC = () => {
         const fetchEmployeeHistory = async () => {
             try {
                 const response = await getEmploymentHistory(employeeId);
-                console.log('response', response);
 
                 if (response && response.employmentHistories && response.employmentHistories.length > 0) {
                     const history = response.employmentHistories[0];
                     setFormData({
-                        dateEmployed: history.dateEmployed,
-                        dateRelieved: history.dateRelieved || '',
-                        duration: history.duration,
-                        currentlyEmployed: history.currentlyEmployed,
+                        dateEmployed: new Date(history.dateEmployed).toISOString().split('T')[0],
+                        dateRelieved: formData.dateRelieved || '',
+                        duration: ' ',
+                        currentlyEmployed: formData.currentlyEmployed,
                         description: history.description,
                     });
+
                 } else {
                     toast.error("No employment history found");
                 }
@@ -81,8 +82,14 @@ const UpdateEmploymentHistory: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
+
+        const updatedFormData = {
+            ...formData,
+            dateRelieved: formData.currentlyEmployed ? null : formData.dateRelieved
+        }
+
         try {
-            await updateEmployeeHistory(employeeId, formData);
+            await updateEmployeeHistory(employeeId, updatedFormData);
             toast.success('Employment history updated successfully!', {
                 duration: 5000,
                 onClose: () => navigate('/core-features/history'),
@@ -117,7 +124,9 @@ const UpdateEmploymentHistory: React.FC = () => {
                                 onChange={handleChange}
                                 className="mt-1 block w-full border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm"
                                 required
+                                // readOnly
                             />
+                            <p className="mt-1 text-xs font-bold text-gray-500">Date Format: mm/dd/yyy </p>
                         </div>
                         <div className="mb-4 w-1/2 bg-white shadow-md rounded-md p-4">
                             <label htmlFor="dateRelieved" className="block text-sm font-medium text-gray-700 dark:text-black dark:font-bold">Date Relieved</label>
@@ -125,13 +134,17 @@ const UpdateEmploymentHistory: React.FC = () => {
                                 type="date"
                                 id="dateRelieved"
                                 name="dateRelieved"
-                                value={formData.dateRelieved}
+                                value= {formData.currentlyEmployed? "": formData.dateRelieved}
                                 onChange={handleChange}
                                 className="mt-1 block w-full border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm"
-                                disabled={formData.currentlyEmployed}
+                                disabled = {formData.currentlyEmployed}
+                                required = {!formData.currentlyEmployed}
                             />
-                            {formData.currentlyEmployed && (
+
+                            {formData.currentlyEmployed ? (
                                 <p className="mt-2 text-sm text-gray-500">Leave Date Relieved empty if currently employed</p>
+                            ) : (
+                                <p className="mt-1 text-xs font-bold text-gray-500">Date Format: mm/dd/yyy </p>
                             )}
                         </div>
                     </div>

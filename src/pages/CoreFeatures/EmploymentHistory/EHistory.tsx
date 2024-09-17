@@ -5,6 +5,7 @@ import Pagination from '../../../components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../../../common/Loader';
 import { toast } from 'react-hot-toast';
+import { useAuth } from '../../Authentication/AuthContext';
 
 const EmployeeList: React.FC = () => {
     const [employees, setEmployees] = useState<any[]>([]);
@@ -17,6 +18,7 @@ const EmployeeList: React.FC = () => {
     const employeesPerPage = 5;
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
 
     useEffect(() => {
         fetchEmployees();
@@ -94,7 +96,8 @@ const EmployeeList: React.FC = () => {
                                         <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Current Position: {employee.position}</p>
                                         <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Department: {employee.department}</p>
                                     </div>
-                                    <div className="flex flex-col gap-2">
+                                    {user?.role === 'HR_Admin' && (
+                                        <div className="flex flex-col gap-2">
                                         <button className="text-sm font-medium text-primary dark:text-white mr-2" onClick={() => handleViewMore(employee.employeeId)}>View More</button>
                                         {employee.hasEmploymentHistory ? (
                                             <button className="text-sm font-medium text-warning dark:text-white mr-2" onClick={() => handleUpdate(employee.employeeId)}>Update History</button>
@@ -102,6 +105,11 @@ const EmployeeList: React.FC = () => {
                                             <button className="text-sm font-medium text-success dark:text-white mr-2" onClick={() => handleAddHistory(employee.employeeId)}>Add History</button>
                                         )}
                                     </div>
+                                    )}
+
+                                    {user?.role !== 'HR_Admin' && (
+                                        <button className="text-sm font-medium text-primary dark:text-white mr-2" onClick={() => handleViewMore(employee.employeeId)}>View More</button>
+                                    )}                          
                                 </div>
                             </li>
                         ))}
@@ -184,7 +192,7 @@ const EmployeeList: React.FC = () => {
                                 {selectedEmployeeHistory.employmentHistories.length > 0 && (
                                     <button 
                                         className="bg-warning hover:bg-warning-dark text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-colors focus:outline-none focus:ring-4 focus:ring-warning focus:ring-opacity-50"
-                                        onClick={() => handleUpdate(selectedEmployeeHistory.employeeId)}
+                                        onClick={() => handleUpdate(selectedEmployeeId || 0)}
                                     >
                                         Update History
                                     </button>

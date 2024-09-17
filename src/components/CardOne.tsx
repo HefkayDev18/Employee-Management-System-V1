@@ -11,7 +11,7 @@ const CardOne: React.FC = () => {
   
 
   useEffect(() => {
-    if (user?.role === 'Admin') {
+    if (user?.role === 'Admin' || user?.role === 'HR_Admin') {
       const fetchEmployees = async () => {
         try {
           const employees = await getEmployees();
@@ -62,7 +62,7 @@ const CardOne: React.FC = () => {
 
       <div className="mt-4 flex items-end justify-between">
         <div>
-          {user.role === 'Admin' ? (
+          {(user.role === 'Admin' || user.role === 'HR_Admin') ? (
             employeeCount === null ? (
               <h4 className="text-title-xs font-bold text-black dark:text-white">Loading...</h4>
             ) : (

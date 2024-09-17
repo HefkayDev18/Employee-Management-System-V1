@@ -63,13 +63,13 @@ const coreRoutes = [
     path: '/core-features/addadverts',
     title: 'Upload Adverts',
     component: AddAdverts,
-    roles: ['Admin'],
+    roles: ['HR_Admin'],
   },
   {
     path: '/core-features/updateadverts',
     title: 'Update Adverts',
     component:  UpdateAdverts,
-    roles: ['Admin'],
+    roles: ['HR_Admin'],
   },
   {
     path: '/core-features/viewadverts',
@@ -93,7 +93,7 @@ const coreRoutes = [
     path: '/files/view-adm-uploads',
     title: 'All File Uploads',
     component: admFileUploads,
-    roles: ['Admin'],
+    roles: ['HR_Admin'],
   },
   //#endregion
 
@@ -102,19 +102,18 @@ const coreRoutes = [
     path: '/departments/add-department',
     title: 'Add Department',
     component: AddDepartment,
-    roles: ['Admin'],
+    roles: ['Faculty_Officer'],
   },
   {
     path: '/departments/update-department',
     title: 'Update Department',
     component: UpdateDepartment,
-    roles: ['Admin'],
+    roles: ['Faculty_Officer'],
   },
   {
     path: '/departments/view-departments',
     title: 'View Departments',
     component: ViewDepartments,
-    roles: ['Admin'],
   },
   //#endregion
   
@@ -123,13 +122,12 @@ const coreRoutes = [
     path: '/faculties/add-faculties',
     title: 'Add Faculties',
     component: AddFaculties,
-    roles: ['Admin'],
+    roles: ['Faculty_Officer'],
   },
   {
     path: '/faculties/view-faculties',
     title: 'View Faculties',
     component: ViewFaculties,
-    roles: ['Admin'],
   },
   //#endregion
 
@@ -138,19 +136,19 @@ const coreRoutes = [
     path: '/employee/create-employee',
     title: 'Create Employee',
     component: CreateEmployee,
-    roles: ['Admin'],
+    roles: ['HR_Admin'],
   },
   {
     path: '/employee/view-employees',
     title: 'View Employees',
     component: ViewEmployee,
-    roles: ['Admin'],
+    roles: ['Admin', 'HR_Admin'],
   },
   {
     path: '/employee/update-employee',
     title: 'Update Employee',
     component: UpdateEmployee,
-    roles: ['Admin'],
+    roles: ['HR_Admin'],
   },
   //#endregion
   
@@ -159,7 +157,7 @@ const coreRoutes = [
     path: '/core-features/history',
     title: 'Employment History',
     component: History,
-    roles: ['Admin'],
+    roles: ['Admin', 'HR_Admin'],
   },
   {
     path: '/core-features/userhistory',
@@ -170,13 +168,13 @@ const coreRoutes = [
     path: '/core-features/add-history',
     title: 'Add Employment History',
     component: AddHistory,
-    roles: ['Admin'],
+    roles: ['HR_Admin'],
   },
   {
     path: '/core-features/update-history',
     title: 'Update Employment History',
     component: UpdateHistory,
-    roles: ['Admin'],
+    roles: ['HR_Admin'],
   },
   //#endregion
   
@@ -205,25 +203,25 @@ const coreRoutes = [
     path: '/medicals/add-adm_medical-records',
     title: 'Add Medical Record',
     component: AddAdmMedicalRecord,
-    roles: ['Admin'],
+    roles: ['MED_Admin'],
   }, 
   {
     path: '/medicals/add-medical-records',
     title: 'Add Medical Record',
     component: AddMedicalRecord,
-    roles: ['Admin'],
+    roles: ['MED_Admin'],
   },
   {
     path: '/medicals/view-medical-records',
     title: 'View Medical Records',
     component: ViewMedicalRecords,
-    roles: ['Admin'],
+    roles: ['MED_Admin'],
   },
   {
     path: '/medicals/view-empmedical-records',
     title: 'View Employee Medical Records',
     component: ViewEmpMedicalRecords,
-    roles: ['User'],
+    // roles: ['User'],
   },
   //#endregion
 
@@ -231,7 +229,7 @@ const coreRoutes = [
     path: '/employee/update-employee-role',
     title: 'Update Employee Role',
     component: UpdateEmployeeRole,
-    roles: ['Admin'],
+    roles: ['HR_Admin'],
   },
 ];
 

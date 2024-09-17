@@ -64,7 +64,7 @@ const CardThree: React.FC = () => {
   const [userCount, setUserCount] = useState<number | null>(null);
 
   useEffect(() => {
-    if (user?.role === 'Admin') {
+    if (user?.role === 'Admin' || user?.role === 'HR_Admin') {
       const fetchEmployees = async () => {
         try {
           const employees = await getEmployees();

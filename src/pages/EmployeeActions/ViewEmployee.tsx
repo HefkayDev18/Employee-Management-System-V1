@@ -24,6 +24,7 @@ interface EmployeeRecord {
   department: string;
   salary: number;
   roleId: number;
+  roleName: string;
   dateCreated: Date;
   dateOfBirth: Date;
 }
@@ -37,6 +38,7 @@ const EmployeeRecordsView = () => {
   const [loading, setLoading] = useState(true);
   useAuthToken();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -58,7 +60,7 @@ const EmployeeRecordsView = () => {
   const filteredEmployeeRecords = employeeRecords.filter((record) => {
     const searchTermLower = searchTerm.toLowerCase();
     const statusString = record.isActive ? 'active' : 'not active';
-    const roleString = record.roleId === 1 ? 'admin' : 'user';
+    const roleString = record.roleName;
 
     return (
       record.fullName.toLowerCase().includes(searchTermLower) ||
@@ -67,7 +69,7 @@ const EmployeeRecordsView = () => {
       record.position.toLowerCase().includes(searchTermLower) ||
       record.department.toLowerCase().includes(searchTermLower) ||
       statusString.includes(searchTermLower) ||
-      roleString.includes(searchTermLower)
+      roleString.toLowerCase().includes(searchTermLower)
     );
   });
 
@@ -169,7 +171,7 @@ const EmployeeRecordsView = () => {
       'Date Created': formatDate(new Date(record.dateCreated)),
       Age: calculateAge(record.dateOfBirth),
       'Date of Birth': formatDate(new Date(record.dateOfBirth)),
-      Role: record.roleId === 1 ? 'Admin' : 'User',
+      Role: record.roleName,
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
@@ -252,9 +254,11 @@ const EmployeeRecordsView = () => {
                 <th className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-center text-md border-b border-gray-200 dark:border-strokedark">
                   Role
                 </th>
+                {user?.role === 'HR_Admin' && (
                 <th className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-center text-md border-b border-gray-200 dark:border-strokedark">
                   Actions
                 </th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -300,8 +304,9 @@ const EmployeeRecordsView = () => {
                     {formatDate(new Date(record.dateOfBirth))}
                   </td>
                   <td className="px-4 py-6 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
-                    {record.roleId === 1 ? 'Admin' : 'User'}
+                    {record.roleName}
                   </td>
+                  {user?.role === 'HR_Admin' && (
                   <td className="px-4 py-4 border border-gray-200 text-center text-sm border-b border-gray-200 dark:border-strokedark">
                     <button
                       className="bg-primary text-white text-xs py-2 px-3 rounded-md font-sm transition hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-dark"
@@ -331,6 +336,7 @@ const EmployeeRecordsView = () => {
                     </button>
 
                   </td>
+                  )}
                 </tr>
               ))}
             </tbody>

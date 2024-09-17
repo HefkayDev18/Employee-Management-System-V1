@@ -86,7 +86,7 @@ const InternalAdvertisementView: React.FC = () => {
                 </div>
             
                 <div className="p-4 dark:bg-boxdark mt-auto">
-                    {user?.role === 'Admin' ? (
+                    {user?.role === 'HR_Admin' ? (
                         <div className="flex items-center justify-between">
                         <a href={ad.link} target="_blank" rel="noopener noreferrer" className="text-boxdark text-sm hover:underline dark:text-white">
                             Learn More

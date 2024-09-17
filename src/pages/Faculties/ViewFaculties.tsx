@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import Breadcrumb from '../../components/Breadcrumb';
 import Pagination from '../../components/Pagination';
 import { FaTrash } from 'react-icons/fa';
+import { useAuth } from '../Authentication/AuthContext';
 
 type Faculty = {
     facultyId: number;
@@ -20,6 +21,7 @@ const ViewFaculties = () => {
     const facultiesPerPage = 5;
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
 
     useEffect(() => {
         fetchFaculties();
@@ -102,12 +104,14 @@ const ViewFaculties = () => {
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <button className="text-sm font-medium text-primary dark:text-white mr-2" onClick={() => handleViewMore(faculty.facultyId)}>View More</button>
+                                        {user?.role === 'Faculty_Officer' && (
                                         <span className="mx-auto">
                                             <button className="text-sm font-medium text-danger dark:text-white" title="Delete" onClick={() => handleDelete(faculty.facultyId)}>
                                                 Delete
                                                 <FaTrash className="inline-block text-xs ml-1 mb-1" /> 
                                             </button>
                                         </span>
+                                        )}
                                     </div>
                                 </div>                          
                             </li>

@@ -40,6 +40,7 @@ const UpdateEmployeeRole = () => {
           getEmployeeById(employee.employeeId),
           getRoles()
         ]);
+        
 
         const employeeRole = rolesData.find((role: Role) => role.roleId === employeeData.roleId);
 

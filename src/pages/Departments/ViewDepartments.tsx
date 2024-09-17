@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../../common/Loader';
+import { useAuth } from '../Authentication/AuthContext';
 
 
 const DepartmentList: React.FC = () => {
@@ -16,6 +17,7 @@ const DepartmentList: React.FC = () => {
     const departmentsPerPage = 2;
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
 
     useEffect(() => {
         fetchDepartments();
@@ -121,13 +123,20 @@ const DepartmentList: React.FC = () => {
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <button className="text-sm font-medium text-primary dark:text-white mr-2" onClick={() => handleViewMore(department.departmentId)}>View More</button>
+
+                                        {user?.role === 'Faculty_Officer' && (
                                         <button className="text-sm font-medium text-warning dark:text-white mr-2" onClick={() => handleUpdate(department.departmentId)}>Update</button>
+                                        )}
+
+                                        {user?.role === 'Faculty_Officer' && (
                                         <span className="mx-auto">
                                             <button className="text-sm font-medium text-danger dark:text-white" title="Delete" onClick={() => handleDelete(department.departmentId)}>
                                                 Delete
                                                 <FaTrash className="inline-block text-xs ml-1 mb-1" /> 
                                             </button>
                                         </span>
+                                        )}
+                                        
                                     </div>
                                 </div>                          
                             </li>

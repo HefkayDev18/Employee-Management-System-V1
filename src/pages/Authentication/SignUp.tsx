@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import PreAuthBanner from '../../components/PreAuthBanner';
@@ -11,7 +11,7 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const { signup } = useAuth();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +23,7 @@ const SignUp = () => {
         title: 'Signup Successful!',
         html: '<span style="color: green">Your account has been created, proceed to login!</span>',
       });
+      navigate('/auth/signin');
     } catch (error) {
       Swal.fire({
         icon: 'error',
